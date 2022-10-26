@@ -6,6 +6,7 @@ export const GlobalStyle = createGlobalStyle`
   margin: 0;
   box-sizing: border-box;
 
+
  }
 
  :focus {
@@ -14,12 +15,13 @@ export const GlobalStyle = createGlobalStyle`
  }
 
  body {
+  font-family: 'Roboto', sans-serif;
   background: ${(props) => props.theme['gray-900']};
   color: ${(props) => props.theme['gray-300']};
   -webkit-font-smoothing: antialiased;
 
   body, input, textarea, button {
-    font-family: 'Roboto', sans-serif;
+
     font-weight: 400;
     font-size: 1rem;
   }
