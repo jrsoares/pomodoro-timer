@@ -17,9 +17,14 @@ nav {
     color: ${props => props.theme['gray-100']};
     border-top: 3px solid transparent;
     border-bottom: 3px solid transparent;
+    ;
     
     &:hover {
       border-bottom: 3px solid ${props => props.theme['green-500']};
+    }
+
+    &:focus {
+     box-shadow: none;
     }
     
     &.active {
