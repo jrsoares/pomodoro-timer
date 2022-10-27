@@ -1,4 +1,5 @@
-import { Play } from "phosphor-react";
+import { useState } from 'react';
+import { Play } from 'phosphor-react';
 import {
   CountDownContainer,
   FormContainer,
@@ -7,12 +8,12 @@ import {
   MinutesAmountInput,
   StartCountdownButton,
   TaskInput,
-} from "./styles";
+} from './styles';
 
-import { useForm } from "react-hook-form";
+import { useForm } from 'react-hook-form';
 
-import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 interface IFormData {
   task: string;
@@ -26,18 +27,45 @@ const CreateNewSchema = yup
   })
   .required();
 
+interface Cycle {
+  id: string;
+  task: string;
+  minutesAmount: number;
+}
+
 export function Home() {
+  const [cycles, setCycles] = useState<Cycle[]>([]);
+  const [activeCycleId, setActiveCycleId] = useState<string | null>(null);
+  const [amountSecondsPassed, setAmountSecondsPassed] = useState(0);
+
   const { register, handleSubmit, watch, formState, reset } =
     useForm<IFormData>({
       resolver: yupResolver(CreateNewSchema),
     });
 
   function handleCreateNewCycle(data: IFormData) {
-    console.log(data);
+    const id = String(new Date().getTime());
+
+    const newCycle = {
+      id,
+      task: data.task,
+      minutesAmount: data.minutesAmount,
+    };
+
+    setCycles((state) => [...state, newCycle]);
+    setActiveCycleId(id);
+
     reset();
   }
+  const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId);
+  const totalSeconds = activeCycle ? activeCycle.minutesAmount * 60 : 0;
+  const currentSeconds = activeCycle ? totalSeconds - amountSecondsPassed : 0;
+  const minutesAmount = Math.floor(currentSeconds / 60);
+  const secondsAmount = currentSeconds % 60;
+  const minutes = String(minutesAmount).padStart(2, '0');
+  const seconds = String(secondsAmount).padStart(2, '0');
 
-  const task = watch("task");
+  const task = watch('task');
   const isSubmitDisable = !task;
 
   return (
@@ -49,7 +77,7 @@ export function Home() {
             id="task"
             list="task-suggestions"
             placeholder="Dê um nome para seu projeto"
-            {...register("task")}
+            {...register('task')}
           />
           <datalist id="task-suggestions">
             <option value="Projeto 1" />
@@ -64,16 +92,16 @@ export function Home() {
             step={5}
             min={5}
             max={60}
-            {...register("minutesAmount", { valueAsNumber: true })}
+            {...register('minutesAmount', { valueAsNumber: true })}
           />
           <span>minutos</span>
         </FormContainer>
         <CountDownContainer>
-          <span>0</span>
-          <span>0</span>
+          <span>{minutes[0]}</span>
+          <span>{minutes[1]}</span>
           <Separator>:</Separator>
-          <span>0</span>
-          <span>0</span>
+          <span>{seconds[0]}</span>
+          <span>{seconds[1]}</span>
         </CountDownContainer>
         <StartCountdownButton type="submit" disabled={isSubmitDisable}>
           <Play size={24} />
