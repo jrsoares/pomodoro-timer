@@ -21,6 +21,7 @@ interface IFormData {
 export function Home() {
   const { createNewCycle, activeCycle, interruptCurrentCycle } =
     useContext(CyclesContext);
+
   const CreateNewSchema = yup
     .object({
       task: yup.string().required(),
@@ -32,13 +33,14 @@ export function Home() {
     resolver: yupResolver(CreateNewSchema),
   });
 
-  const { handleSubmit, watch, formState, reset } = newCycleForm;
+  const { handleSubmit, watch, reset } = newCycleForm;
 
   const task = watch("task");
   const isSubmitDisable = !task;
 
   function handleCreateNewCycle(data: IFormData) {
     createNewCycle(data);
+    reset();
   }
 
   return (
